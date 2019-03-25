@@ -52,9 +52,6 @@ if __name__ == "__main__":
     m1 = Minion("Combat Network Teuer", d1)
     m2 = Minion("Silens Combat Drone", d2)
 
-    print(m1.roll_die())
-    print(m2.roll_die())
-
     m2.take_damage(m1.roll_die())
     m1.take_damage(m2.roll_die())
 
