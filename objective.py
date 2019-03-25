@@ -35,7 +35,6 @@ class Challenge:
         return ("[X]"*self.complete) + ("[ ]"*(self.count-self.complete)) + " " + self.description
 
 if __name__ == "__main__":
-
     new_cha = Challenge(2, "Defuse the bombs!")
     new_cha+1
     print(new_cha)
