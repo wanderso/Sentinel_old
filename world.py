@@ -78,7 +78,5 @@ class SceneTracker:
             return self.tracker.pop()
 
 
-
-
 if __name__ == "__main__":
     pass
