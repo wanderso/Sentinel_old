@@ -30,14 +30,40 @@ class Dice:
         else:
             return self.context[from_context]
 
-    def get_value(self):
+    def get_num(self):
         return self.value + self.boost
+
+    def get_value(self):
+        return self.value
+
+    def set_value(self, num):
+        self.value = num
 
     def roll(self):
         self.value = Dice.dn(self.die)
         if self.get_context_true("debug"):
             print("Die d%d rolled: %d" % (self.die, self.value))
         return self.value + self.boost
+
+    def reroll(self, context={}):
+        if 'higher' in context:
+            original = self.get_value()
+            self.roll()
+            new = self.get_value()
+            if original < new:
+                self.set_value(new)
+            else:
+                self.set_value(original)
+        elif 'lower' in context:
+            original = self.get_value()
+            self.roll()
+            new = self.get_value()
+            if original < new:
+                self.set_value(new)
+            else:
+                self.set_value(original)
+        else:
+            self.roll()
 
     def increase_die_size(self):
         if self.die == 4:
@@ -78,17 +104,26 @@ class Dice:
 
 
 class DicePool:
-    def __init__(self, dice_list, help_dice=[], hinder_dice=[]):
+    def __init__(self, dice_list, help_dice=[], hinder_dice=[], deep_copy= True):
         self.dice_list = []
         self.help_dice = []
         self.hinder_dice = []
 
         for die in dice_list:
-            self.dice_list.append(Dice.copy_die(die))
+            target_die = die
+            if deep_copy:
+                target_die = Dice.copy_die(die)
+            self.dice_list.append(target_die)
         for die in help_dice:
-            self.help_dice.append(Dice.copy_die(die))
+            target_die = die
+            if deep_copy:
+                target_die = Dice.copy_die(die)
+            self.help_dice.append(target_die)
         for die in hinder_dice:
-            self.hinder_dice.append(Dice.copy_die(die))
+            target_die = die
+            if deep_copy:
+                target_die = Dice.copy_die(die)
+            self.hinder_dice.append(target_die)
 
         self.core_values = []
         self.modifier = 0
@@ -100,34 +135,42 @@ class DicePool:
         self.hinder_values = []
         self.modifier = 0
 
+    def reroll_die(self, die, context={}):
+        die.reroll(context=context)
+        self.calculate_modifier()
+        self.sort()
+
     def roll(self):
         self.reset_values()
         for die in self.dice_list:
             die.roll()
-        self.dice_list.sort()
         for die in self.help_dice:
             die.roll()
-        self.help_dice.sort()
         for die in self.hinder_dice:
             die.roll()
-        self.hinder_dice.sort()
         self.calculate_modifier()
+        self.sort()
+
+    def sort(self):
+        self.hinder_dice.sort()
+        self.help_dice.sort()
+        self.dice_list.sort()
 
     def calculate_modifier(self):
         self.modifier = 0
         for die in self.help_dice:
-            self.modifier += ResultGenerator.boost_result(die.get_value())
+            self.modifier += ResultGenerator.boost_result(die.get_num())
         for die in self.hinder_dice:
-            self.modifier -= ResultGenerator.boost_result(die.get_value())
+            self.modifier -= ResultGenerator.boost_result(die.get_num())
 
     def max_val(self):
-        return self.max_die().get_value() + self.modifier
+        return self.max_die().get_num() + self.modifier
 
     def min_val(self):
-        return self.min_die().get_value() + self.modifier
+        return self.min_die().get_num() + self.modifier
 
     def mid_val(self):
-        return self.mid_die().get_value() + self.modifier
+        return self.mid_die().get_num() + self.modifier
 
     def max_die(self):
         return self.dice_list[-1]
@@ -150,15 +193,13 @@ if __name__ == "__main__":
     total_iterations = 100000
     value_list = [0, 0, 0, 0, 0]
 
-    dp = DicePool([d10, d10, d10], help_dice=[d12])
-
-    print("Is d6 > d12?")
-    d6.roll()
-    d12.roll()
+    dp = DicePool([d10, d10, d10])
 
     for _ in range(0, total_iterations):
         dp.roll()
-        value_list[ResultGenerator.overcome_result(dp.max_val())] += 1
+        dp.reroll_die(dp.min_die())
+        dp.reroll_die(dp.min_die())
+        value_list[ResultGenerator.overcome_result(dp.mid_val())] += 1
 
     i = 0
     for entry in value_list:
