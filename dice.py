@@ -197,8 +197,6 @@ if __name__ == "__main__":
 
     for _ in range(0, total_iterations):
         dp.roll()
-        dp.reroll_die(dp.min_die())
-        dp.reroll_die(dp.min_die())
         value_list[ResultGenerator.overcome_result(dp.mid_val())] += 1
 
     i = 0
