@@ -26,6 +26,9 @@ class Minion(Character):
         self.value = None
         self.current_die = Dice(self.max_die.get_die_size(), context=self.max_die.get_context())
 
+    def get_current_die(self):
+        return self.current_die
+
     def roll_die(self):
         self.value = self.current_die.roll()
         return self.value

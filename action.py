@@ -1,4 +1,6 @@
 from Sentinel.dice import Dice, DicePool
+from Sentinel.character import Minion
+
 
 class Action:
     def __init__(self, context={}):
@@ -24,23 +26,20 @@ class Action:
             fxn(self.context)
 
     def execute_internals(self):
-        #virtual method
+        # virtual method
         assert False
 
     def roll_dice(self):
         if self.dice_pool is None:
             return None
         elif type(self.dice_pool) == Dice:
-            # single die
+            self.dice_pool.roll()
             pass
         elif type(self.dice_pool) == DicePool:
-            # multiple dice
+            self.dice_pool.roll()
             pass
-
-
-    def roll_dice(self):
-        #virtual method
-        assert False
+        else:
+            pass
 
 
 class Attack(Action):
@@ -48,13 +47,43 @@ class Attack(Action):
         super().__init__(context=context)
 
     def process_context(self):
-        self.target = self.context['target']
-        self.source = self.context['source']
-        self.dice_pool = self.context['dice pool']
-        self.types = self.context['damage types']
+        self.action_type = "Attack"
+        if 'target' in self.context:
+            self.target = self.context['target']
+        if 'source' in self.context:
+            self.source = self.context['source']
+        if 'dice_pool' in self.context:
+            self.dice_pool = self.context['dice pool']
+        else:
+            source_type = type(self.source)
+            if source_type == Minion:
+                self.dice_pool = self.source.get_current_die()
+        if 'damage types' in self.context:
+            self.types = self.context['damage types']
+        else:
+            self.types = ['Physical','Energy']
 
 
-
-    def execute(self):
-        dam_val = self.pool.roll()
+    def execute_internals(self):
+        dam_val = 0
+        if self.dice_pool is None:
+            return None
+        elif type(self.dice_pool) == Dice:
+            dam_val = self.dice_pool.get_num()
+        elif type(self.dice_pool) == DicePool:
+            dam_val = self.dice_pool.get_mid()
+        else:
+            dam_val = self.dice_pool
         self.target.take_damage(dam_val)
+
+if __name__ == "__main__":
+    d1 = Dice(6, context={'debug': True})
+    d2 = Dice(8, context={'debug': True})
+
+    m1 = Minion("Combat Network Teuer", d1)
+    m2 = Minion("Silens Combat Drone", d2)
+
+    action1 = Attack(context={'target': m1, 'source': m2, 'damage types': ['Physical']})
+    action1.execute()
+
+    print(m1.current_die.die)
