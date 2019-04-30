@@ -18,6 +18,9 @@ class Character:
     def remove(self):
         assert False
 
+    def __str__(self):
+        return str(self.name)
+
 class Minion(Character):
     def __init__(self, name, die, context={}):
         super().__init__(name, context=context)

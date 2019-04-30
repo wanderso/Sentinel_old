@@ -9,6 +9,10 @@ class World:
         new_tracker = TrackEntity(entity, ambush=ambush)
         self.entity_tracker.append(new_tracker)
 
+    def remove_entity(self, search_target):
+        to_remove = self.find_entity(search_target)
+        self.entity_tracker.remove(to_remove)
+
     def set_scene_tracker(self, green, yellow, red):
         self.scene_tracker = SceneTracker(green, yellow, red)
 
@@ -137,6 +141,9 @@ if __name__ == "__main__":
     new_world.add_entity("Placeholder Minion")
     new_world.add_entity("Placeholder Lieutenant")
     new_world.add_entity("Placeholder Ambusher", ambush=True)
+    new_world.add_entity("Placeholder Eraser")
+    new_world.remove_entity("Placeholder Eraser")
+
     print(new_world)
     new_world.hand_off("Placeholder Ambusher")
     print(new_world)
