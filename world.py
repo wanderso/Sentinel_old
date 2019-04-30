@@ -41,6 +41,30 @@ class World:
     def get_active_entity(self):
         return self.active_entity
 
+    def __str__(self):
+        retstr = ""
+        has_moved = []
+        is_moving = None
+        not_moved = []
+        for entry in self.entity_tracker:
+            if entry == self.active_entity:
+                is_moving = entry
+            elif entry.check_acted():
+                has_moved.append(entry)
+            else:
+                not_moved.append(entry)
+
+        retstr = str(self.get_scene_tracker()) + "\n"
+        for entry in has_moved:
+            retstr += str(entry.get_entity()) + " has already acted. \n"
+        if is_moving:
+            retstr += str(entry.get_entity()) + " is the current actor. \n"
+        for entry in not_moved:
+            retstr += str(entry.get_entity()) + " is ready to act. \n"
+
+
+        return retstr
+
 
 class TrackEntity:
     def __init__(self, entity, ambush=False):
@@ -62,11 +86,11 @@ class SceneTracker:
         assert (green >= 0) and (yellow >= 0) and (red >= 0)
         self.tracker = []
         for _ in range(0, green):
-            self.tracker.insert("Green")
+            self.tracker.append("Green")
         for _ in range(0, yellow):
-            self.tracker.insert("Yellow")
+            self.tracker.append("Yellow")
         for _ in range(-1, red):
-            self.tracker.insert("Red")
+            self.tracker.append("Red")
 
     def get_tracker(self):
         return self.tracker[-1]
@@ -77,6 +101,15 @@ class SceneTracker:
         else:
             return self.tracker.pop()
 
+    def __str__(self):
+        retstr = ""
+        return retstr
 
 if __name__ == "__main__":
-    pass
+    new_world = World()
+    new_world.set_scene_tracker(2,4,2)
+    new_world.add_entity("Placeholder Minion")
+    new_world.add_entity("Placeholder Lieutenant")
+    new_world.add_entity("Placeholder Ambusher", ambush=True)
+    print(new_world)
+
