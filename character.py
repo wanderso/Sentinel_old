@@ -4,6 +4,10 @@ class Character:
     def __init__(self, name, context={}):
         self.abilities = []
         self.name = name
+        self.world = None
+
+    def set_world(self, world):
+        self.world = world
 
     def take_damage(self, damage):
         #virtual method
@@ -51,6 +55,10 @@ class Minion(Character):
 
     def remove(self):
         print("Removing %s" % self.name)
+        self.world.remove_entity(self)
+
+    def __str__(self):
+        return str(self.name)
 
 if __name__ == "__main__":
     d1 = Dice(6, context={'debug':True})

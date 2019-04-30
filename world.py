@@ -56,7 +56,6 @@ class World:
         return self.active_entity
 
     def __str__(self):
-        retstr = ""
         has_moved = []
         is_moving = None
         not_moved = []
@@ -77,7 +76,6 @@ class World:
             retstr += "\n"
         for entry in not_moved:
             retstr += str(entry.get_entity()) + " is ready to act. \n"
-
 
         return retstr
 
