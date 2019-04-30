@@ -15,6 +15,9 @@ class World:
     def get_scene_tracker(self):
         return self.scene_tracker
 
+    def inc_scene_tracker(self):
+        self.scene_tracker.advance_tracker()
+
     def check_turn_over(self):
         for entity in self.entity_tracker:
             if not entity.check_acted():
@@ -25,7 +28,8 @@ class World:
         for entity in self.entity_tracker:
             entity.set_acted(False)
 
-    def hand_off(self, entity_now):
+    def hand_off(self, entity_hand):
+        entity_now = self.find_entity(entity_hand)
         if self.active_entity == entity_now and len(self.entity_tracker) != 1:
             return -1
         if self.active_entity is not None:
@@ -37,6 +41,12 @@ class World:
             return -2
         self.active_entity = entity_now
         return 1
+
+    def find_entity(self, search_target):
+        for entry in self.entity_tracker:
+            if entry.get_entity() == search_target:
+                return entry
+        return None
 
     def get_active_entity(self):
         return self.active_entity
@@ -54,11 +64,13 @@ class World:
             else:
                 not_moved.append(entry)
 
-        retstr = str(self.get_scene_tracker()) + "\n"
+        retstr = str(self.get_scene_tracker()) + "\n\n"
         for entry in has_moved:
             retstr += str(entry.get_entity()) + " has already acted. \n"
         if is_moving:
-            retstr += str(entry.get_entity()) + " is the current actor. \n"
+            retstr += "\n" + str(is_moving.get_entity()) + " is the current actor. \n\n"
+        elif len(has_moved) != 0 and len(not_moved) != 0:
+            retstr += "\n"
         for entry in not_moved:
             retstr += str(entry.get_entity()) + " is ready to act. \n"
 
@@ -84,32 +96,55 @@ class TrackEntity:
 class SceneTracker:
     def __init__(self, green, yellow, red):
         assert (green >= 0) and (yellow >= 0) and (red >= 0)
+        self.index = 0
         self.tracker = []
         for _ in range(0, green):
             self.tracker.append("Green")
         for _ in range(0, yellow):
             self.tracker.append("Yellow")
-        for _ in range(-1, red):
+        for _ in range(0, red):
             self.tracker.append("Red")
+        self.tracker.append("End of Scene")
 
     def get_tracker(self):
-        return self.tracker[-1]
+        return self.tracker[self.index]
 
-    def advance_tracker(self):
-        if len(self.tracker) == 0:
+    def advance_tracker(self, advance=1):
+        if len(self.tracker)-1 <= self.index:
             return "End of Scene"
         else:
-            return self.tracker.pop()
+            self.index += advance
+            return self.tracker[self.index]
 
     def __str__(self):
         retstr = ""
+        navigate_index = 0
+        for entry in self.tracker[:-1]:
+            if navigate_index < self.index:
+                retstr += ">" + entry + "< "
+            elif navigate_index == self.index:
+                retstr += "(" + entry + ") "
+            else:
+                retstr += " " + entry + "  "
+            navigate_index += 1
+
         return retstr
 
 if __name__ == "__main__":
     new_world = World()
     new_world.set_scene_tracker(2,4,2)
+
     new_world.add_entity("Placeholder Minion")
     new_world.add_entity("Placeholder Lieutenant")
     new_world.add_entity("Placeholder Ambusher", ambush=True)
     print(new_world)
+    new_world.hand_off("Placeholder Ambusher")
+    print(new_world)
+    new_world.hand_off("Placeholder Minion")
+    print(new_world)
+    new_world.hand_off("Placeholder Lieutenant")
+    print(new_world)
+    new_world.hand_off("Placeholder Minion")
+    print(new_world)
+
 
