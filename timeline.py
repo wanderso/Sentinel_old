@@ -15,8 +15,6 @@ class Turn:
         self.character = None
 
 
-
-
 class CharacterTimeline:
     def __init__(self, scene, character):
         self.scene = scene
@@ -26,9 +24,8 @@ class CharacterTimeline:
 
     def access_turn(self, distance_from_index=0):
         length_of_turns = len(self.turns)
-        if self.turns >= self.turn_index + distance_from_index:
+        if length_of_turns >= self.turn_index + distance_from_index:
             pass
-
 
 
 class FullTimeline:
