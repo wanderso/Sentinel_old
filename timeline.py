@@ -16,7 +16,7 @@ class Turn:
 
 
 class CharacterTimeline:
-    def __init__(self, scene, character):
+    def __init__(self, character, scene=None):
         self.scene = scene
         self.character = character
         self.turns = []

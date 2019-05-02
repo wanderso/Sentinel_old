@@ -1,16 +1,23 @@
 from Sentinel.dice import Dice
 
+
 class Character:
     def __init__(self, name, context={}):
         self.abilities = []
+        self.timeline = None
         self.name = name
         self.world = None
+
+    def set_timeline(self, timeline):
+        self.timeline = timeline
+
+    def get_timeline(self):
+        return self.timeline
 
     def set_world(self, world):
         self.world = world
 
     def take_damage(self, damage):
-        #virtual method
         assert False
 
     def heal_damage(self, heal_count):
@@ -24,6 +31,7 @@ class Character:
 
     def __str__(self):
         return str(self.name)
+
 
 class Minion(Character):
     def __init__(self, name, die, context={}):
@@ -59,6 +67,7 @@ class Minion(Character):
 
     def __str__(self):
         return str(self.name)
+
 
 if __name__ == "__main__":
     d1 = Dice(6, context={'debug':True})
