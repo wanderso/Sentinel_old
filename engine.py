@@ -18,6 +18,7 @@ class Engine:
         if 'ambush' in context:
             ambush = context['ambush']
         timeline = Timeline.CharacterTimeline(chara)
+        chara.set_timeline(timeline)
         self.world.add_entity(chara, ambush=ambush)
 
         chara.set_world(self.world)
