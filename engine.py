@@ -62,5 +62,3 @@ if __name__ == "__main__":
     world_engine.resolve_action()
 
     print(world_engine.world)
-
-    print(repr(m1))
