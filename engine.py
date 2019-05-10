@@ -27,7 +27,7 @@ class Engine:
         self.world.set_scene_tracker(green, yellow, red)
         self.world.reset_turn()
 
-    def execute_turn(self):
+    def execute_turn(self, turn):
         pass
 
     def place_action_on_stack(self, action):

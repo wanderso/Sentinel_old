@@ -1,5 +1,5 @@
 from Sentinel.dice import Dice, DicePool
-from Sentinel.character import Minion
+from Sentinel.character import Minion, Lieutenant
 
 
 class Action:
@@ -56,12 +56,12 @@ class Attack(Action):
             self.dice_pool = self.context['dice pool']
         else:
             source_type = type(self.source)
-            if source_type == Minion:
+            if source_type == Minion or source_type == Lieutenant:
                 self.dice_pool = self.source.get_current_die()
         if 'damage types' in self.context:
             self.types = self.context['damage types']
         else:
-            self.types = ['Physical','Energy']
+            self.types = ['Physical', 'Energy']
 
 
     def execute_internals(self):
@@ -76,6 +76,9 @@ class Attack(Action):
             dam_val = self.dice_pool
         self.target.take_damage(dam_val)
 
+    def __str__(self):
+        return "Attack {}.".format(self.target)
+
 if __name__ == "__main__":
     d1 = Dice(6, context={'debug': True})
     d2 = Dice(8, context={'debug': True})
@@ -84,6 +87,7 @@ if __name__ == "__main__":
     m2 = Minion("Silens Combat Drone", d2)
 
     action1 = Attack(context={'target': m1, 'source': m2, 'damage types': ['Physical']})
+    print(action1)
     action1.execute()
 
     print(m1.current_die.die)
