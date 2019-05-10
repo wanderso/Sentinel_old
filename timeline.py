@@ -67,12 +67,16 @@ class Turn:
             retstr += "At the end of this turn, {}.".format(end_string)
         return retstr
 
+
 class CharacterTimeline:
     def __init__(self, character, scene=None):
         self.scene = scene
         self.character = character
         self.turns = [Turn()]
         self.turn_index = 0
+
+    def __getitem__(self, i):
+        return self.access_turn(distance_from_index=i)
 
     def access_turn(self, distance_from_index=0):
         length_of_turns = len(self.turns)
