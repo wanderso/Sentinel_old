@@ -1,10 +1,10 @@
-import Sentinel.action as Action
-import Sentinel.character as Character
-import Sentinel.dice as Dice
-import Sentinel.objective as Objective
-import Sentinel.results as Results
-import Sentinel.timeline as Timeline
-import Sentinel.world as World
+import Core.action as Action
+import Core.character as Character
+import Core.dice as Dice
+import Core.objective as Objective
+import Core.results as Results
+import Core.timeline as Timeline
+import Core.world as World
 
 
 class Engine:

@@ -1,5 +1,5 @@
-from Sentinel.dice import Dice, DicePool
-from Sentinel.character import Minion, Lieutenant
+from Core.dice import Dice, DicePool
+from Core.character import Minion, Lieutenant
 
 
 class Action:

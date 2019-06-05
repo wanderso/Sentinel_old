@@ -1,5 +1,5 @@
 import random
-from Sentinel.results import ResultGenerator
+from Core.results import ResultGenerator
 
 
 

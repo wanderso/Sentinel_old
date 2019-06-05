@@ -1,4 +1,4 @@
-from Sentinel.dice import Dice
+from Core.dice import Dice
 
 
 class Character:
