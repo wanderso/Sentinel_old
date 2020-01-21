@@ -1,15 +1,6 @@
-import Sentinel.action as Action
-import Sentinel.character as Character
-import Sentinel.dice as Dice
-import Sentinel.objective as Objective
-import Sentinel.results as Results
-import Sentinel.timeline as Timeline
-import Sentinel.world as World
-
-
 class Engine:
     def __init__(self):
-        self.world = World.World()
+        self.world = world.World()
         self.hand_off_required = False
         self.stack = []
 
@@ -17,7 +8,8 @@ class Engine:
         ambush = False
         if 'ambush' in context:
             ambush = context['ambush']
-        timeline = Timeline.CharacterTimeline(chara)
+        timeline = timeline.CharacterTimeline(chara)
+        chara.set_timeline(timeline)
         self.world.add_entity(chara, ambush=ambush)
 
         chara.set_world(self.world)
@@ -25,6 +17,18 @@ class Engine:
     def start_scene(self, green, yellow, red):
         self.world.set_scene_tracker(green, yellow, red)
         self.world.reset_turn()
+
+    def execute_turn_split_second(self, turn):
+        for entry in turn.get_start_action():
+            self.place_action_on_stack(entry)
+            self.resolve_action()
+        for entry in turn.get_action_taken():
+            self.place_action_on_stack(entry)
+            self.resolve_action()
+        for entry in turn.get_end_action():
+            self.place_action_on_stack(entry)
+            self.resolve_action()
+
 
     def place_action_on_stack(self, action):
         self.stack.append(action)
@@ -35,16 +39,15 @@ class Engine:
 
 
 if __name__ == "__main__":
-
     world_engine = Engine()
 
-    d6 = Dice.Dice(6, context={'debug': True})
-    d8 = Dice.Dice(8, context={'debug': True})
+    d6 = dice.Dice(6, context={'debug': True})
+    d8 = dice.Dice(8, context={'debug': True})
 
-    m1 = Character.Minion("Combat Network Teuer", d6)
-    m2 = Character.Minion("Silens Combat Drone", d8)
-    m3 = Character.Minion("Silens Combat Drone", d8)
-    m4 = Character.Minion("Combat Network Teuer", d6)
+    m1 = character.Minion("Combat Network Teuer", d6)
+    m2 = character.Minion("Silens Combat Drone", d8)
+    m3 = character.Minion("Silens Combat Drone", d8)
+    m4 = character.Minion("Combat Network Teuer", d6)
 
     world_engine.add_character(m1)
     world_engine.add_character(m2)
@@ -53,10 +56,9 @@ if __name__ == "__main__":
 
     world_engine.start_scene(2, 4, 2)
 
-    action1 = Action.Attack(context={'target': m1, 'source': m2, 'damage types': ['Physical']})
+    action1 = action.Attack(context={'target': m1, 'source': m2, 'damage types': ['Physical']})
 
     world_engine.place_action_on_stack(action1)
     world_engine.resolve_action()
 
     print(world_engine.world)
-

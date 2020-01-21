@@ -1,7 +1,12 @@
 import random
-from Sentinel.results import ResultGenerator
+from Core.results import ResultGenerator
+
+
 
 class Dice:
+    Minimum_Size = 4
+    Maximum_Size = 12
+
     def __init__(self, die, context={}):
         self.die = die
         self.context = context

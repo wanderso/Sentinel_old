@@ -1,4 +1,4 @@
-from Sentinel.dice import Dice
+from Core.dice import Dice
 
 
 class Character:
@@ -51,7 +51,7 @@ class Minion(Character):
     def take_damage(self, damage):
         self.roll_die()
         damage_save = self.value
-        if damage_save >= damage:
+        if damage_save >= damage and self.current_die.get_die_size() != Dice.Minimum_Size:
             self.current_die.decrease_die_size()
         else:
             self.remove()
@@ -63,10 +63,18 @@ class Minion(Character):
 
     def remove(self):
         print("Removing %s" % self.name)
-        self.world.remove_entity(self)
+        if self.world:
+            self.world.remove_entity(self)
 
     def __str__(self):
         return str(self.name)
+
+    def __repr__(self):
+        if self.current_die.get_die_size() == self.max_die.get_die_size():
+            repr_str = "%s (Minion d%d)" % (self.name, self.max_die.get_die_size())
+        else:
+            repr_str = "%s (Minion d%d [d%d])" % (self.name, self.max_die.get_die_size(), self.current_die.get_die_size())
+        return repr_str
 
 
 class Lieutenant(Character):
@@ -100,10 +108,15 @@ class Lieutenant(Character):
 
     def remove(self):
         print("Removing %s" % self.name)
-        self.world.remove_entity(self)
+        if self.world:
+            self.world.remove_entity(self)
+
 
     def __str__(self):
-        return str(self.name)
+        if self.current_die.get_die_size() == self.max_die.get_die_size():
+            repr_str = "%s (Lieutenant d%d)" % (self.name, self.max_die.get_die_size())
+        return repr_str
+
 
 
 
@@ -115,4 +128,8 @@ if __name__ == "__main__":
 
     m2.take_damage(m1.roll_die())
     m1.take_damage(m2.roll_die())
+
+    print(repr(m1))
+    print(repr(m2))
+
 
