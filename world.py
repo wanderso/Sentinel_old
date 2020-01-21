@@ -107,16 +107,38 @@ class SceneTracker:
         for _ in range(0, red):
             self.tracker.append("Red")
         self.tracker.append("End of Scene")
+        self._observers = []
 
     def get_tracker(self):
         return self.tracker[self.index]
 
+    def get_tracker_list(self):
+        return self.tracker
+
+    def get_index(self):
+        return self.index
+
+    def get_entry_at_index(self, ind):
+        return self.tracker[ind]
+
     def advance_tracker(self, advance=1):
         if len(self.tracker)-1 <= self.index:
-            return "End of Scene"
+            retstr = "End of Scene"
         else:
             self.index += advance
-            return self.tracker[self.index]
+            retstr = self.tracker[self.index]
+
+        for entry in self._observers:
+            entry._observe_tracker()
+
+        return retstr
+
+
+    def set_display(self, display):
+        self._observers.append(display)
+
+    def add_observer(self, object):
+        self._observers.append(object)
 
     def __str__(self):
         retstr = ""
